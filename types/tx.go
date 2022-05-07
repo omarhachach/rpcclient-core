@@ -327,3 +327,32 @@ type PreviousTransaction struct {
 	WitnessScript string  `json:"witness_script"`
 	Amount        float64 `json:"amount"`
 }
+
+// SigHashType indicates a signature hash's type.
+type SigHashType string
+
+// The valid values for the SigHashType enum.
+const (
+	SigHashTypeAll                SigHashType = "ALL"
+	SigHashTypeNone               SigHashType = "NONE"
+	SigHashTypeSingle             SigHashType = "SINGLE"
+	SigHashTypeAllAnyoneCanPay    SigHashType = "ALL|ANYONECANPAY"
+	SigHashTypeNoneAnyoneCanPay   SigHashType = "NONE|ANYONECANPAY"
+	SigHashTypeSingleAnyoneCanPay SigHashType = "SINGLE|ANYONECANPAY"
+)
+
+// SignRawTransactionResult is the result of signrawtransactionwithkey.
+type SignRawTransactionResult struct {
+	Hex      string                           `json:"hex"`
+	Complete bool                             `json:"complete"`
+	Errors   []*SignRawTransactionResultError `json:"errors"`
+}
+
+// SignRawTransactionResultError is included if there is an error when calling signrawtranscationwithkey.
+type SignRawTransactionResultError struct {
+	Txid      string `json:"txid"`
+	Vout      int    `json:"vout"`
+	ScriptSig string `json:"scriptSig"`
+	Sequence  int    `json:"sequence"`
+	Error     string `json:"error"`
+}

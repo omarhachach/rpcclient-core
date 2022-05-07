@@ -192,3 +192,19 @@ func (c *Client) SendRawTransaction(hex string, maxfeerate *float64) (string, er
 
 	return tx, c.SendReq("sendrawtransaction", &tx, hex)
 }
+
+// SignRawTransactionWithKey signs a raw transaction witht he provided keys.
+// If prevTxs is null or length 0, will be omitted. If sigHashType is "" will be set to types.SigHashTypeAll.
+func (c *Client) SignRawTransactionWithKey(hex string, privKeys []string, prevTxs []*types.PreviousTransaction, sigHashType types.SigHashType) (*types.SignRawTransactionResult, error) {
+	var res *types.SignRawTransactionResult
+
+	if prevTxs == nil || len(prevTxs) == 0 {
+		return res, c.SendReq("signrawtransactionwithkey", &res, hex, privKeys)
+	}
+
+	if sigHashType == "" {
+		sigHashType = types.SigHashTypeAll
+	}
+
+	return res, c.SendReq("signrawtransactionwithkey", &res, hex, privKeys, prevTxs, sigHashType)
+}
