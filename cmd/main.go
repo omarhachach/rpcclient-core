@@ -7,8 +7,9 @@ import (
 )
 
 func main() {
+	// TODO: build cli
 	client, err := rpcclient.New(&rpcclient.Config{
-		Host:                 "http://bitcoin.staging.dreamsescrow.com/",
+		Host:                 "http://localhost:8333",
 		User:                 "bitcoind",
 		Pass:                 "bitcoind",
 		DisableAutoReconnect: false,
