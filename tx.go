@@ -99,7 +99,7 @@ func (c *Client) CreatePSBT(inputs []*types.CreateTxInput, outputs []map[string]
 }
 
 // CreateRawTransaction creates a raw transaction.
-func (c *Client) CreateRawTransaction(inputs []*types.CreateTxInput, outputs []map[string]string, locktime int, replaceable bool) (string, error) {
+func (c *Client) CreateRawTransaction(inputs []*types.CreateTxInput, outputs map[string]string, locktime int, replaceable bool) (string, error) {
 	var rawtx string
 
 	return rawtx, c.SendReq("createrawtransaction", &rawtx, inputs, outputs, locktime, replaceable)
