@@ -89,6 +89,20 @@ type ScriptPubKey struct {
 	Addresses []string `json:"addresses"`
 }
 
+// GetAddress retrieves the first address, it first checks Address then first entry of Addresses.
+// Returns "" if none is found.
+func (s *ScriptPubKey) GetAddress() string {
+	if s.Address != "" {
+		return s.Address
+	}
+
+	if len(s.Addresses) > 0 {
+		return s.Addresses[0]
+	}
+
+	return ""
+}
+
 // TransactionOut holds info about a transaction's unspent output.
 type TransactionOut struct {
 	BestBlock     string        `json:"bestblock"`
