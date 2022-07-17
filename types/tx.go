@@ -370,3 +370,14 @@ type SignRawTransactionResultError struct {
 	Sequence  int    `json:"sequence"`
 	Error     string `json:"error"`
 }
+
+// TestMempoolAcceptResult is the result of testmempoolaccept.
+type TestMempoolAcceptResult struct {
+	Txid    string `json:"txid"`
+	Allowed bool   `json:"allowed"`
+	Vsize   int
+	Fees    struct {
+		Base float64 `json:"base"`
+	} `json:"fees"`
+	RejectReason string `json:"reject-reason"`
+}

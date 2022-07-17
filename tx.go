@@ -79,7 +79,7 @@ func (c *Client) CombineRawTransaction(txs []string) (string, error) {
 	return tx, c.SendReq("combinerawtransaction", &tx, txs)
 }
 
-// ConvertToPSBT converts a transaction to a AnalyzePSBTResult.
+// ConvertToPSBT converts a transaction to a psbt.
 // If iswitness is null, it will use a heuristic to determine it.
 func (c *Client) ConvertToPSBT(hex string, permitsigdata bool, iswitness *bool) (string, error) {
 	var psbt string
@@ -91,7 +91,7 @@ func (c *Client) ConvertToPSBT(hex string, permitsigdata bool, iswitness *bool) 
 	return psbt, c.SendReq("converttopsbt", &psbt, hex, permitsigdata)
 }
 
-// CreatePSBT creates a AnalyzePSBTResult.
+// CreatePSBT creates a psbt.
 func (c *Client) CreatePSBT(inputs []*types.CreateTxInput, outputs []map[string]string, locktime int, replaceable bool) (string, error) {
 	var psbt string
 
@@ -99,7 +99,7 @@ func (c *Client) CreatePSBT(inputs []*types.CreateTxInput, outputs []map[string]
 }
 
 // CreateRawTransaction creates a raw transaction.
-func (c *Client) CreateRawTransaction(inputs []*types.CreateTxInput, outputs map[string]string, locktime int, replaceable bool) (string, error) {
+func (c *Client) CreateRawTransaction(inputs []*types.CreateTxInput, outputs []map[string]string, locktime int, replaceable bool) (string, error) {
 	var rawtx string
 
 	return rawtx, c.SendReq("createrawtransaction", &rawtx, inputs, outputs, locktime, replaceable)
@@ -193,7 +193,7 @@ func (c *Client) SendRawTransaction(hex string, maxfeerate *float64) (string, er
 	return tx, c.SendReq("sendrawtransaction", &tx, hex)
 }
 
-// SignRawTransactionWithKey signs a raw transaction witht he provided keys.
+// SignRawTransactionWithKey signs a raw transaction with the provided keys.
 // If prevTxs is null or length 0, will be omitted. If sigHashType is "" will be set to types.SigHashTypeAll.
 func (c *Client) SignRawTransactionWithKey(hex string, privKeys []string, prevTxs []*types.PreviousTransaction, sigHashType types.SigHashType) (*types.SignRawTransactionResult, error) {
 	var res *types.SignRawTransactionResult
@@ -207,4 +207,34 @@ func (c *Client) SignRawTransactionWithKey(hex string, privKeys []string, prevTx
 	}
 
 	return res, c.SendReq("signrawtransactionwithkey", &res, hex, privKeys, prevTxs, sigHashType)
+}
+
+// TestMempoolAccept returns the result of mempool acceptance tsts indicating if raw transaction would be accepted by
+// the mempool.
+func (c *Client) TestMempoolAccept(rawtxs []string, maxfeeRate *float64) ([]*types.TestMempoolAcceptResult, error) {
+	var res []*types.TestMempoolAcceptResult
+
+	if maxfeeRate != nil {
+		return res, c.SendReq("testmempoolaccept", &res, rawtxs, *maxfeeRate)
+	}
+
+	return res, c.SendReq("testmempoolaccept", &res, rawtxs)
+}
+
+// UtxoUpdatePSBT updates all segwit inputs and outputs in a PSBT with data from output descriptors, the UTXO set or the
+// mempool.
+func (c *Client) UtxoUpdatePSBT(psbt string, scanObjects ...*types.ScanTxOutSetObject) (string, error) {
+	var res string
+
+	objs := make([]string, len(scanObjects))
+	for idx, obj := range scanObjects {
+		serializedObj, err := obj.ToJSON()
+		if err != nil {
+			return "", err
+		}
+
+		objs[idx] = string(serializedObj)
+	}
+
+	return res, c.SendReq("utxoupdatepsbt", &res, psbt, objs)
 }

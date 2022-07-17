@@ -89,3 +89,15 @@ func (c *Client) GetRPCInfo() (*types.RPCInfo, error) {
 
 	return info, c.SendReq("getrpcinfo", &info)
 }
+
+// Uptime returns the total uptime of the server in seconds.
+func (c *Client) Uptime() (int, error) {
+	var uptime int
+
+	return uptime, c.SendReq("uptime", &uptime)
+}
+
+// Stop requests a graceful shutdown of the node.
+func (c *Client) Stop() error {
+	return c.SendReq("stop", "")
+}
